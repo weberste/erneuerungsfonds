@@ -207,7 +207,26 @@ function renderCharts(results, plafonierung) {
     options: {
       responsive: true,
       plugins: {
-        tooltip: tooltipCHF,
+        tooltip: {
+          filter: function(item) {
+            return item.parsed.y !== 0;
+          },
+          callbacks: {
+            title: function(items) {
+              var idx = items[0].dataIndex;
+              var r = results[idx];
+              var parts = [];
+              if (r.einzahlung > 0) parts.push('Jährliche Einzahlung');
+              if (r.ausgabenDetails.length > 0) {
+                r.ausgabenDetails.forEach(function(a) { parts.push(a.name); });
+              }
+              return parts.join(', ') || 'Gebäudealter ' + r.gebaeudeAlter;
+            },
+            label: function(ctx) {
+              return formatCHF(Math.abs(ctx.parsed.y));
+            }
+          }
+        },
       },
       scales: {
         x: {
