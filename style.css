@@ -49,11 +49,14 @@ h3 {
 /* Form */
 
 .params {
+  margin-bottom: 2rem;
+}
+
+.params-box {
   background: #fff;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   padding: 1.5rem;
-  margin-bottom: 2rem;
 }
 
 .form-grid {
