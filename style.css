@@ -344,6 +344,11 @@ input[type="text"]::placeholder {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
+.chart-container h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
 .chart-container canvas {
   max-height: 280px;
 }
