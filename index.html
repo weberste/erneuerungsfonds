@@ -13,17 +13,20 @@
     <p>Visualisierung der Fondsentwicklung einer Stockwerkeigentümergemeinschaft</p>
   </header>
 
-  <main>
-    <section class="params">
-      <h2>Annahmen</h2>
-      <div class="params-box">
-        <div class="params-summary" id="paramsSummary">
-          <!-- Filled by JS -->
+  <main class="main-layout">
+    <aside class="sidebar">
+      <section class="params">
+        <h2>Annahmen</h2>
+        <div class="params-box">
+          <div class="params-summary" id="paramsSummary">
+            <!-- Filled by JS -->
+          </div>
+          <button type="button" id="openModal" class="btn-secondary">Annahmen konfigurieren</button>
         </div>
-        <button type="button" id="openModal" class="btn-secondary">Annahmen konfigurieren</button>
-      </div>
-    </section>
+      </section>
+    </aside>
 
+    <div class="main-content">
     <!-- Modal -->
     <div class="modal-overlay" id="modalOverlay" hidden>
       <div class="modal">
@@ -183,6 +186,7 @@
         </div>
       </div>
     </section>
+    </div>
   </main>
 
   <script src="app.js"></script>

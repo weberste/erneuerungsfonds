@@ -36,8 +36,27 @@ header p {
 }
 
 main {
-  max-width: 960px;
+  max-width: 1200px;
   margin: 0 auto;
+}
+
+.main-layout {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.sidebar {
+  width: 420px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 2rem;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+  max-width: 780px;
 }
 
 h2 {
@@ -292,7 +311,7 @@ input[type="text"]::placeholder {
 }
 
 .chart-container canvas {
-  max-height: 350px;
+  max-height: 280px;
 }
 
 /* Sonderumlagen table */
@@ -398,9 +417,13 @@ input[type="text"]::placeholder {
 
 .params-summary-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   margin-bottom: 1.25rem;
+}
+
+.sidebar .params-summary-grid {
+  grid-template-columns: 1fr;
 }
 
 .params-summary-card {
@@ -448,8 +471,12 @@ input[type="text"]::placeholder {
 .summary-table th,
 .summary-table td {
   text-align: left;
-  padding: 0.6rem 0.75rem;
+  padding: 0.5rem 0.5rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.sidebar .summary-table {
+  font-size: 0.85rem;
 }
 
 .summary-table th {
@@ -538,6 +565,25 @@ input[type="text"]::placeholder {
 
 /* Responsive */
 
+@media (max-width: 1100px) {
+  main {
+    max-width: 600px;
+  }
+
+  .main-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    position: static;
+  }
+
+  .sidebar .params-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 640px) {
   body {
     padding: 1rem;
@@ -549,6 +595,10 @@ input[type="text"]::placeholder {
 
   .param-row {
     flex-direction: column;
+  }
+
+  .sidebar .params-summary-grid {
+    grid-template-columns: 1fr;
   }
 
   .ausgabe-row {
