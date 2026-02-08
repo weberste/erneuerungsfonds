@@ -15,109 +15,125 @@
 
   <main>
     <section class="params">
-      <h2>Parameter</h2>
+      <h2>Annahmen</h2>
       <div class="params-box">
-      <form id="simForm">
-        <div class="param-row">
-          <div class="form-group">
-            <label for="gebaeudeAlter">Gebäudealter</label>
-            <div class="input-wrapper">
-              <input type="number" id="gebaeudeAlter" value="4" min="0" step="1">
-              <span class="unit">Jahre</span>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="fondsstand">Aktueller Fondsstand</label>
-            <div class="input-wrapper">
-              <input type="text" inputmode="decimal" id="fondsstand" value="180'000" data-format="chf">
-              <span class="unit">CHF</span>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="gvs">Gebäudeversicherungsschatzung</label>
-            <div class="input-wrapper">
-              <input type="text" inputmode="decimal" id="gvs" value="18'102'000" data-format="chf">
-              <span class="unit">CHF</span>
-            </div>
-          </div>
+        <div class="params-summary" id="paramsSummary">
+          <!-- Filled by JS -->
         </div>
-
-        <div class="param-row">
-          <div class="form-group">
-            <label for="einzahlungProzent">Reguläre Einzahlungen</label>
-            <div class="input-wrapper">
-              <input type="number" id="einzahlungProzent" value="0.4" min="0" step="0.05">
-              <span class="unit">% der GVS</span>
-            </div>
-            <span class="computed-chf" id="einzahlungCHF"></span>
-          </div>
-
-          <div class="form-group">
-            <label for="plafonierung">Plafonierung</label>
-            <div class="input-wrapper">
-              <input type="number" id="plafonierung" value="2" min="0" step="0.5">
-              <span class="unit">% der GVS</span>
-            </div>
-            <span class="computed-chf" id="plafonierungCHF"></span>
-          </div>
-
-          <div class="form-group">
-            <label for="wertquote">Wertquote</label>
-            <div class="input-wrapper">
-              <input type="number" id="wertquote" value="243" min="0" step="1">
-              <span class="unit">/ 10'000</span>
-            </div>
-          </div>
-        </div>
-
-        <h3>Ausgabenposten</h3>
-        <div id="ausgaben">
-          <div class="ausgabe-row" data-index="0">
-            <button type="button" class="btn-remove" title="Entfernen">&times;</button>
-            <input type="text" placeholder="Name" class="ausgabe-name" value="Sanierung Aussenhülle">
-            <div class="input-wrapper">
-              <input type="number" placeholder="Fälligkeit" class="ausgabe-faelligkeit" value="20" min="0" step="1">
-              <span class="unit">Jahre</span>
-            </div>
-            <div class="toggle-group">
-              <button type="button" class="toggle-btn" data-type="chf">CHF</button>
-              <button type="button" class="toggle-btn active" data-type="prozent">% GVS</button>
-            </div>
-            <div class="input-wrapper">
-              <input type="text" inputmode="decimal" placeholder="Kosten" class="ausgabe-kosten" value="7" data-format="chf">
-            </div>
-            <span class="ausgabe-chf-hint"></span>
-          </div>
-          <div class="ausgabe-row" data-index="1">
-            <button type="button" class="btn-remove" title="Entfernen">&times;</button>
-            <input type="text" placeholder="Name" class="ausgabe-name" value="Photovoltaik">
-            <div class="input-wrapper">
-              <input type="number" placeholder="Fälligkeit" class="ausgabe-faelligkeit" value="18" min="0" step="1">
-              <span class="unit">Jahre</span>
-            </div>
-            <div class="toggle-group">
-              <button type="button" class="toggle-btn active" data-type="chf">CHF</button>
-              <button type="button" class="toggle-btn" data-type="prozent">% GVS</button>
-            </div>
-            <div class="input-wrapper">
-              <input type="text" inputmode="decimal" placeholder="Kosten" class="ausgabe-kosten" value="400'000" data-format="chf">
-            </div>
-            <span class="ausgabe-chf-hint"></span>
-          </div>
-        </div>
-        <button type="button" id="addAusgabe" class="btn-secondary">+ Ausgabe hinzufügen</button>
-
-        <div class="form-actions">
-          <button type="submit" class="btn-primary">Simulation starten</button>
-          <button type="button" id="resetDefaults" class="btn-tertiary">Zurücksetzen</button>
-        </div>
-      </form>
+        <button type="button" id="openModal" class="btn-secondary">Annahmen konfigurieren</button>
       </div>
     </section>
 
-    <section class="results" id="results" hidden>
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" hidden>
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Annahmen konfigurieren</h2>
+          <button type="button" class="modal-close" id="closeModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="simForm">
+            <div class="param-row">
+              <div class="form-group">
+                <label for="gebaeudeAlter">Gebäudealter</label>
+                <div class="input-wrapper">
+                  <input type="number" id="gebaeudeAlter" value="4" min="0" step="1">
+                  <span class="unit">Jahre</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="fondsstand">Aktueller Fondsstand</label>
+                <div class="input-wrapper">
+                  <input type="text" inputmode="decimal" id="fondsstand" value="180'000" data-format="chf">
+                  <span class="unit">CHF</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="gvs">Gebäudeversicherungsschatzung</label>
+                <div class="input-wrapper">
+                  <input type="text" inputmode="decimal" id="gvs" value="18'102'000" data-format="chf">
+                  <span class="unit">CHF</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="param-row">
+              <div class="form-group">
+                <label for="einzahlungProzent">Reguläre Einzahlungen</label>
+                <div class="input-wrapper">
+                  <input type="number" id="einzahlungProzent" value="0.4" min="0" step="0.05">
+                  <span class="unit">% der GVS</span>
+                </div>
+                <span class="computed-chf" id="einzahlungCHF"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="plafonierung">Plafonierung</label>
+                <div class="input-wrapper">
+                  <input type="number" id="plafonierung" value="2" min="0" step="0.5">
+                  <span class="unit">% der GVS</span>
+                </div>
+                <span class="computed-chf" id="plafonierungCHF"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="wertquote">Wertquote</label>
+                <div class="input-wrapper">
+                  <input type="number" id="wertquote" value="243" min="0" step="1">
+                  <span class="unit">/ 10'000</span>
+                </div>
+              </div>
+            </div>
+
+            <h3>Ausgabenposten</h3>
+            <div id="ausgaben">
+              <div class="ausgabe-row" data-index="0">
+                <button type="button" class="btn-remove" title="Entfernen">&times;</button>
+                <input type="text" placeholder="Name" class="ausgabe-name" value="Sanierung Aussenhülle">
+                <div class="input-wrapper">
+                  <input type="number" placeholder="Fälligkeit" class="ausgabe-faelligkeit" value="20" min="0" step="1">
+                  <span class="unit">Jahre</span>
+                </div>
+                <div class="toggle-group">
+                  <button type="button" class="toggle-btn" data-type="chf">CHF</button>
+                  <button type="button" class="toggle-btn active" data-type="prozent">% GVS</button>
+                </div>
+                <div class="input-wrapper">
+                  <input type="text" inputmode="decimal" placeholder="Kosten" class="ausgabe-kosten" value="7" data-format="chf">
+                </div>
+                <span class="ausgabe-chf-hint"></span>
+              </div>
+              <div class="ausgabe-row" data-index="1">
+                <button type="button" class="btn-remove" title="Entfernen">&times;</button>
+                <input type="text" placeholder="Name" class="ausgabe-name" value="Photovoltaik">
+                <div class="input-wrapper">
+                  <input type="number" placeholder="Fälligkeit" class="ausgabe-faelligkeit" value="18" min="0" step="1">
+                  <span class="unit">Jahre</span>
+                </div>
+                <div class="toggle-group">
+                  <button type="button" class="toggle-btn active" data-type="chf">CHF</button>
+                  <button type="button" class="toggle-btn" data-type="prozent">% GVS</button>
+                </div>
+                <div class="input-wrapper">
+                  <input type="text" inputmode="decimal" placeholder="Kosten" class="ausgabe-kosten" value="400'000" data-format="chf">
+                </div>
+                <span class="ausgabe-chf-hint"></span>
+              </div>
+            </div>
+            <button type="button" id="addAusgabe" class="btn-secondary">+ Ausgabe hinzufügen</button>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">Simulation aktualisieren</button>
+              <button type="button" id="resetDefaults" class="btn-tertiary">Annahmen zurücksetzen</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <section class="results" id="results">
       <h2>Entwicklung Erneuerungsfonds</h2>
 
       <div class="chart-container">

@@ -515,38 +515,135 @@ function runSimulation() {
 document.getElementById('simForm').addEventListener('submit', function(e) {
   e.preventDefault();
   runSimulation();
+  updateParamsSummary();
+  closeModal();
   document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
 });
 
-// --- Auto-update with 2s debounce ---
-
-var debounceTimer = null;
-
-function scheduleSimulation() {
-  clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(runSimulation, 2000);
-}
+// --- Save on input ---
 
 document.getElementById('simForm').addEventListener('input', function() {
-  scheduleSimulation();
   saveToLocalStorage();
 });
 document.getElementById('ausgaben').addEventListener('click', function(e) {
   if (e.target.classList.contains('toggle-btn') || e.target.classList.contains('btn-remove')) {
-    scheduleSimulation();
     saveToLocalStorage();
   }
 });
 
 // --- Reset to defaults ---
 
-document.getElementById('resetDefaults').addEventListener('click', function() {
+var defaultValues = {
+  gebaeudeAlter: '4',
+  fondsstand: "180'000",
+  gvs: "18'102'000",
+  einzahlungProzent: '0.4',
+  plafonierung: '2',
+  wertquote: '243'
+};
+
+var defaultAusgaben = [
+  { name: 'Sanierung Aussenhülle', faelligkeit: '20', kosten: '7', typ: 'prozent' },
+  { name: 'Photovoltaik', faelligkeit: '18', kosten: "400'000", typ: 'chf' }
+];
+
+function resetToDefaults() {
+  // Reset simple fields
+  Object.keys(defaultValues).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = defaultValues[id];
+  });
+
+  // Reset ausgaben
+  var container = document.getElementById('ausgaben');
+  container.innerHTML = '';
+  defaultAusgaben.forEach(function(ausgabe, index) {
+    var row = createAusgabeRow(index);
+    row.querySelector('.ausgabe-name').value = ausgabe.name;
+    row.querySelector('.ausgabe-faelligkeit').value = ausgabe.faelligkeit;
+    row.querySelector('.ausgabe-kosten').value = ausgabe.kosten;
+
+    var toggleBtns = row.querySelectorAll('.toggle-btn');
+    toggleBtns.forEach(function(btn) {
+      btn.classList.remove('active');
+      if (btn.dataset.type === ausgabe.typ) {
+        btn.classList.add('active');
+      }
+    });
+
+    container.appendChild(row);
+  });
+
+  ausgabeCount = defaultAusgaben.length;
+  updateAddButton();
+  updateComputedCHF();
+  updateAusgabenHints();
   localStorage.removeItem(STORAGE_KEY);
-  location.reload();
+}
+
+document.getElementById('resetDefaults').addEventListener('click', resetToDefaults);
+
+// --- Modal ---
+
+var modalOverlay = document.getElementById('modalOverlay');
+
+document.getElementById('openModal').addEventListener('click', function() {
+  modalOverlay.hidden = false;
+  document.body.style.overflow = 'hidden';
 });
+
+function closeModal() {
+  modalOverlay.hidden = true;
+  document.body.style.overflow = '';
+}
+
+document.getElementById('closeModal').addEventListener('click', closeModal);
+
+modalOverlay.addEventListener('click', function(e) {
+  if (e.target === modalOverlay) {
+    closeModal();
+  }
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && !modalOverlay.hidden) {
+    closeModal();
+  }
+});
+
+// --- Params Summary ---
+
+function updateParamsSummary() {
+  var params = getParams();
+  var gvs = params.gvs;
+
+  var html = '<div class="params-summary-row">';
+  html += '<div class="params-summary-item"><span class="params-summary-label">Gebäudealter:</span> <span class="params-summary-value">' + params.gebaeudeAlter + ' Jahre</span></div>';
+  html += '<div class="params-summary-item"><span class="params-summary-label">Fondsstand:</span> <span class="params-summary-value">CHF ' + formatNum(params.fondsstandStart) + '</span></div>';
+  html += '<div class="params-summary-item"><span class="params-summary-label">GVS:</span> <span class="params-summary-value">CHF ' + formatNum(gvs) + '</span></div>';
+  html += '</div>';
+
+  html += '<div class="params-summary-row">';
+  html += '<div class="params-summary-item"><span class="params-summary-label">Einzahlung:</span> <span class="params-summary-value">' + params.einzahlungProzent + '% (CHF ' + formatNum(gvs * params.einzahlungProzent / 100) + '/Jahr)</span></div>';
+  html += '<div class="params-summary-item"><span class="params-summary-label">Plafonierung:</span> <span class="params-summary-value">' + params.plafonierung + '% (CHF ' + formatNum(gvs * params.plafonierung / 100) + ')</span></div>';
+  html += '<div class="params-summary-item"><span class="params-summary-label">Wertquote:</span> <span class="params-summary-value">' + params.wertquote + ' / 10\'000</span></div>';
+  html += '</div>';
+
+  if (params.ausgaben.length > 0) {
+    html += '<h4>Ausgabenposten</h4>';
+    params.ausgaben.forEach(function(a) {
+      var kosten = a.typ === 'prozent' ? gvs * a.kosten / 100 : a.kosten;
+      html += '<div class="ausgabe-summary">' + a.name + ': CHF ' + formatNum(kosten) + ' (nach ' + a.faelligkeit + ' Jahren)</div>';
+    });
+  }
+
+  document.getElementById('paramsSummary').innerHTML = html;
+}
 
 // --- Initialize from localStorage ---
 
 loadFromLocalStorage();
 updateComputedCHF();
 updateAusgabenHints();
+updateParamsSummary();
+runSimulation();
