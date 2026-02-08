@@ -217,6 +217,9 @@ function renderCharts(results, plafonierung) {
 
   const tooltipCHF = {
     callbacks: {
+      title: function(items) {
+        return 'Nach ' + items[0].label + ' Jahren';
+      },
       label: function(ctx) {
         return ctx.dataset.label + ': ' + formatCHF(Math.abs(ctx.parsed.y));
       }
