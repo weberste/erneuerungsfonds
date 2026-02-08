@@ -46,7 +46,7 @@
 
         <div class="param-row">
           <div class="form-group">
-            <label for="einzahlungProzent">Reguläre Einzahlung</label>
+            <label for="einzahlungProzent">Reguläre Einzahlungen</label>
             <div class="input-wrapper">
               <input type="number" id="einzahlungProzent" value="0.4" min="0" step="0.05">
               <span class="unit">% der GVS</span>
@@ -117,7 +117,7 @@
     </section>
 
     <section class="results" id="results" hidden>
-      <h2>Ergebnisse</h2>
+      <h2>Entwicklung Erneuerungsfonds</h2>
 
       <div class="chart-container">
         <h3>Fondsstand über die Zeit</h3>
@@ -129,21 +129,41 @@
         <canvas id="chartFlows"></canvas>
       </div>
 
-      <div id="sonderumlagenSection" hidden>
-        <h3>Ausserordentliche Einzahlungen</h3>
-        <table id="sonderumlagenTable">
-          <thead>
-            <tr>
-              <th>Gebäudealter</th>
-              <th>Ausgabe</th>
-              <th>Fehlbetrag</th>
-              <th>Pro Eigentümer</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-          <tfoot></tfoot>
-        </table>
-        <p class="section-subtitle" id="wertquoteHinweis"></p>
+      <h2>Einzahlungen pro Eigentümer</h2>
+      <p class="section-subtitle" id="wertquoteHinweis"></p>
+
+      <div class="info-box" id="eigentuemer-section">
+        <h4>Reguläre Einzahlungen</h4>
+        <div class="einzahlung-grid">
+          <div class="einzahlung-item">
+            <span class="einzahlung-value" id="einzahlungProEigentuemer"></span>
+            <span class="einzahlung-label">pro Jahr</span>
+          </div>
+          <div class="einzahlung-item">
+            <span class="einzahlung-value" id="einzahlungProQuartal"></span>
+            <span class="einzahlung-label">pro Quartal</span>
+          </div>
+          <div class="einzahlung-item">
+            <span class="einzahlung-value" id="gesamtEinzahlungen"></span>
+            <span class="einzahlung-label">total über <span id="gesamtEinzahlungenZeitraum"></span></span>
+          </div>
+        </div>
+
+        <div id="sonderumlagenSection" hidden>
+          <h4>Ausserordentliche Einzahlungen</h4>
+          <table id="sonderumlagenTable">
+            <thead>
+              <tr>
+                <th>Gebäudealter</th>
+                <th>Ausgabe</th>
+                <th>Fehlbetrag</th>
+                <th>Pro Eigentümer</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot></tfoot>
+          </table>
+        </div>
       </div>
     </section>
   </main>

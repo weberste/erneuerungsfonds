@@ -279,13 +279,45 @@ input[type="text"]::placeholder {
 
 /* Sonderumlagen table */
 
-#sonderumlagenSection {
+.info-box {
   background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 16px;
   padding: 1.75rem;
   margin-bottom: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.info-box h3 {
+  margin-top: 0;
+}
+
+.info-box p {
+  margin: 0 0 0.5rem;
+  color: #1d1d1f;
+}
+
+.info-box p:last-child {
+  margin-bottom: 0;
+}
+
+.info-box h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 2rem 0 0.5rem;
+  color: #1d1d1f;
+}
+
+.info-box h4:first-child {
+  margin-top: 0;
+}
+
+#sonderumlagenSection {
+  margin-top: 1rem;
+}
+
+#sonderumlagenSection h4 {
+  margin-top: 0;
 }
 
 #sonderumlagenSection h3 {
@@ -298,7 +330,35 @@ input[type="text"]::placeholder {
   font-size: 0.8rem;
   color: #6e6e73;
   margin-top: 0.75rem;
-  margin-bottom: 0;
+  margin-bottom: 0.75rem;
+}
+
+.text-small {
+  font-size: 0.85rem;
+  color: #6e6e73;
+}
+
+.einzahlung-grid {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.einzahlung-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.einzahlung-value {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
+.einzahlung-label {
+  font-size: 0.8rem;
+  color: #6e6e73;
 }
 
 #sonderumlagenTable {

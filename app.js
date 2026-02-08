@@ -188,7 +188,7 @@ function renderCharts(results, plafonierung) {
       labels,
       datasets: [
         {
-          label: 'Reguläre Einzahlung',
+          label: 'Reguläre Einzahlungen',
           data: einzahlungen,
           backgroundColor: '#34c759',
         },
@@ -216,7 +216,7 @@ function renderCharts(results, plafonierung) {
               var idx = items[0].dataIndex;
               var r = results[idx];
               var parts = [];
-              if (r.einzahlung > 0) parts.push('Reguläre Einzahlung');
+              if (r.einzahlung > 0) parts.push('Reguläre Einzahlungen');
               if (r.ausgabenDetails.length > 0) {
                 r.ausgabenDetails.forEach(function(a) { parts.push(a.name); });
               }
@@ -400,6 +400,24 @@ updateAusgabenHints();
 
 // --- Form submission ---
 
+function renderEigentuemerInfo(params, results) {
+  const jaehrlicherBeitrag = params.gvs * params.einzahlungProzent / 100;
+  const beitragProEigentuemer = jaehrlicherBeitrag * params.wertquote / 10000;
+  const beitragProQuartal = beitragProEigentuemer / 4;
+
+  // Gesamtsumme der regulären Einzahlungen über die Simulationsdauer
+  const gesamtEinzahlungenFonds = results.reduce((sum, r) => sum + r.einzahlung, 0);
+  const gesamtEinzahlungenEigentuemer = gesamtEinzahlungenFonds * params.wertquote / 10000;
+  const anzahlJahre = results.length;
+
+  document.getElementById('einzahlungProEigentuemer').textContent = formatCHF(beitragProEigentuemer);
+  document.getElementById('einzahlungProQuartal').textContent = formatCHF(beitragProQuartal);
+  document.getElementById('gesamtEinzahlungen').textContent = formatCHF(gesamtEinzahlungenEigentuemer);
+  document.getElementById('gesamtEinzahlungenZeitraum').textContent = anzahlJahre + ' Jahre';
+  document.getElementById('wertquoteHinweis').textContent =
+    'Berechnung basierend auf Wertquote ' + params.wertquote + ' / 10\u2019000';
+}
+
 function runSimulation() {
   const params = getParams();
   if (isNaN(params.gebaeudeAlter) || isNaN(params.gvs) || params.gvs <= 0) return;
@@ -409,6 +427,7 @@ function runSimulation() {
 
   document.getElementById('results').hidden = false;
   renderCharts(results, plafonierungCHF);
+  renderEigentuemerInfo(params, results);
   renderSonderumlagen(results, params.wertquote);
 }
 
