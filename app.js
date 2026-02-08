@@ -260,7 +260,7 @@ function renderCharts(results, plafonierung) {
           title: { display: true, text: 'Gebäudealter (Jahre)' },
         },
         y: {
-          title: { display: true, text: 'CHF' },
+          title: { display: false },
           beginAtZero: true,
           ticks: {
             callback: v => formatCHF(v),
@@ -323,7 +323,7 @@ function renderCharts(results, plafonierung) {
           stacked: true,
         },
         y: {
-          title: { display: true, text: 'CHF' },
+          title: { display: false },
           stacked: true,
           ticks: {
             callback: v => formatCHF(v),
