@@ -621,24 +621,47 @@ function updateParamsSummary() {
   var params = getParams();
   var gvs = params.gvs;
 
-  var html = '<div class="params-summary-row">';
-  html += '<div class="params-summary-item"><span class="params-summary-label">Gebäudealter:</span> <span class="params-summary-value">' + params.gebaeudeAlter + ' Jahre</span></div>';
-  html += '<div class="params-summary-item"><span class="params-summary-label">Fondsstand:</span> <span class="params-summary-value">CHF ' + formatNum(params.fondsstandStart) + '</span></div>';
-  html += '<div class="params-summary-item"><span class="params-summary-label">GVS:</span> <span class="params-summary-value">CHF ' + formatNum(gvs) + '</span></div>';
+  var html = '<div class="params-summary-grid">';
+
+  html += '<div class="params-summary-card">';
+  html += '<span class="params-summary-label">Gebäudealter</span>';
+  html += '<span class="params-summary-value">' + params.gebaeudeAlter + ' Jahre</span>';
   html += '</div>';
 
-  html += '<div class="params-summary-row">';
-  html += '<div class="params-summary-item"><span class="params-summary-label">Einzahlung:</span> <span class="params-summary-value">' + params.einzahlungProzent + '% (CHF ' + formatNum(gvs * params.einzahlungProzent / 100) + '/Jahr)</span></div>';
-  html += '<div class="params-summary-item"><span class="params-summary-label">Plafonierung:</span> <span class="params-summary-value">' + params.plafonierung + '% (CHF ' + formatNum(gvs * params.plafonierung / 100) + ')</span></div>';
-  html += '<div class="params-summary-item"><span class="params-summary-label">Wertquote:</span> <span class="params-summary-value">' + params.wertquote + ' / 10\'000</span></div>';
+  html += '<div class="params-summary-card">';
+  html += '<span class="params-summary-label">Aktueller Fondsstand</span>';
+  html += '<span class="params-summary-value">CHF ' + formatNum(params.fondsstandStart) + '</span>';
+  html += '</div>';
+
+  html += '<div class="params-summary-card">';
+  html += '<span class="params-summary-label">Einzahlung pro Jahr (' + params.einzahlungProzent + '%)</span>';
+  html += '<span class="params-summary-value">CHF ' + formatNum(gvs * params.einzahlungProzent / 100) + '</span>';
+  html += '</div>';
+
+  html += '<div class="params-summary-card">';
+  html += '<span class="params-summary-label">Plafonierung (' + params.plafonierung + '%)</span>';
+  html += '<span class="params-summary-value">CHF ' + formatNum(gvs * params.plafonierung / 100) + '</span>';
+  html += '</div>';
+
   html += '</div>';
 
   if (params.ausgaben.length > 0) {
-    html += '<h4>Ausgabenposten</h4>';
+    html += '<div class="ausgaben-summary-section">';
+    html += '<h4>Erwartete grosse Erneuerungen</h4>';
+    html += '<table class="summary-table">';
+    html += '<thead><tr><th>Gebäudealter</th><th>Erneuerung</th><th>Kosten</th></tr></thead>';
+    html += '<tbody>';
     params.ausgaben.forEach(function(a) {
       var kosten = a.typ === 'prozent' ? gvs * a.kosten / 100 : a.kosten;
-      html += '<div class="ausgabe-summary">' + a.name + ': CHF ' + formatNum(kosten) + ' (nach ' + a.faelligkeit + ' Jahren)</div>';
+      html += '<tr>';
+      html += '<td>' + a.faelligkeit + ' Jahre</td>';
+      html += '<td>' + a.name + '</td>';
+      html += '<td>' + formatCHF(kosten) + '</td>';
+      html += '</tr>';
     });
+    html += '</tbody>';
+    html += '</table>';
+    html += '</div>';
   }
 
   document.getElementById('paramsSummary').innerHTML = html;
