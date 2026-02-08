@@ -356,29 +356,6 @@ input[type="text"]::placeholder {
   color: #6e6e73;
 }
 
-.einzahlung-grid {
-  display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.einzahlung-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.einzahlung-value {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #1d1d1f;
-}
-
-.einzahlung-label {
-  font-size: 0.8rem;
-  color: #6e6e73;
-}
-
 #sonderumlagenTable {
   width: 100%;
   border-collapse: collapse;
@@ -443,6 +420,11 @@ input[type="text"]::placeholder {
   color: #6e6e73;
   text-transform: uppercase;
   letter-spacing: 0.02em;
+}
+
+.summary-with-divider {
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .ausgaben-summary-section {
