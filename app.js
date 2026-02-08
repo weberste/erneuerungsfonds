@@ -35,11 +35,11 @@ function simulate(params) {
   const jaehrlicherBeitrag = gvs * einzahlungProzent / 100;
   const plafonierungCHF = gvs * plafonierung / 100;
 
-  // Determine simulation end: last expense year, or at least current age + 1
+  // Determine simulation end: last expense year + 2, or at least current age + 1
   const maxAlter = ausgaben.length > 0
     ? Math.max(...ausgaben.map(a => a.faelligkeit))
     : gebaeudeAlter;
-  const endAlter = Math.max(maxAlter, gebaeudeAlter + 1);
+  const endAlter = Math.max(maxAlter + 2, gebaeudeAlter + 1);
 
   let fondsstand = fondsstandStart;
   const results = [];
