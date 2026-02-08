@@ -513,7 +513,6 @@ function runSimulation() {
 
   const plafonierungCHF = params.gvs * params.plafonierung / 100;
 
-  document.getElementById('results').hidden = false;
   renderCharts(results, plafonierungCHF);
   renderEigentuemerInfo(params, results);
   renderSonderumlagen(results, params.wertquote);

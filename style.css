@@ -396,22 +396,11 @@ input[type="text"]::placeholder {
   margin-top: 0;
 }
 
-#sonderumlagenSection h3 {
-  margin-top: 0;
-  margin-bottom: 0.25rem;
-  color: #ff9500;
-}
-
 .section-subtitle {
   font-size: 0.8rem;
   color: #6e6e73;
   margin-top: 0.75rem;
   margin-bottom: 0.75rem;
-}
-
-.text-small {
-  font-size: 0.85rem;
-  color: #6e6e73;
 }
 
 #sonderumlagenTable {
