@@ -69,16 +69,19 @@ h3 {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.25rem;
+.param-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+  width: 220px;
 }
 
 .form-group label {
@@ -95,9 +98,12 @@ h3 {
   gap: 0.5rem;
 }
 
-.input-wrapper input {
-  flex: 1;
-  min-width: 0;
+.param-row .input-wrapper input {
+  width: 140px;
+}
+
+.ausgabe-row .input-wrapper input {
+  width: 90px;
 }
 
 .unit {
@@ -149,7 +155,7 @@ input[type="text"]::placeholder {
 }
 
 .ausgabe-row .ausgabe-name {
-  width: 140px;
+  width: 220px;
 }
 
 .ausgabe-row .input-wrapper input {
@@ -340,8 +346,8 @@ input[type="text"]::placeholder {
     font-size: 1.75rem;
   }
 
-  .form-grid {
-    grid-template-columns: 1fr;
+  .param-row {
+    flex-direction: column;
   }
 
   .ausgabe-row {

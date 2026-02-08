@@ -188,7 +188,7 @@ function renderCharts(results, plafonierung) {
       labels,
       datasets: [
         {
-          label: 'Jährliche Einzahlungen',
+          label: 'Reguläre Einzahlung',
           data: einzahlungen,
           backgroundColor: '#34c759',
         },
@@ -216,7 +216,7 @@ function renderCharts(results, plafonierung) {
               var idx = items[0].dataIndex;
               var r = results[idx];
               var parts = [];
-              if (r.einzahlung > 0) parts.push('Jährliche Einzahlung');
+              if (r.einzahlung > 0) parts.push('Reguläre Einzahlung');
               if (r.ausgabenDetails.length > 0) {
                 r.ausgabenDetails.forEach(function(a) { parts.push(a.name); });
               }
