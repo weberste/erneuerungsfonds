@@ -127,9 +127,9 @@ function simulate(params) {
   const results = [];
 
   for (let alter = gebaeudeAlter; alter <= endAlter; alter++) {
-    // 1. Einzahlung
+    // 1. Einzahlung (nicht im ersten Jahr, da bereits im Fondsstand enthalten)
     let einzahlung = 0;
-    if (fondsstand < plafonierungCHF) {
+    if (alter > gebaeudeAlter && fondsstand < plafonierungCHF) {
       einzahlung = Math.min(jaehrlicherBeitrag, plafonierungCHF - fondsstand);
     }
     fondsstand += einzahlung;
@@ -203,9 +203,13 @@ function formatCHF(val) {
 function renderCharts(results, plafonierung) {
   const labels = results.map(r => r.gebaeudeAlter);
   const fondsstandData = results.map(r => r.fondsstand);
-  const einzahlungen = results.map(r => r.einzahlung);
-  const ausgaben = results.map(r => -r.ausgaben);
-  const aoEinzahlungen = results.map(r => r.sonderumlage);
+
+  // Für Flows-Chart: erstes Jahr überspringen (per Definition 0)
+  const flowsResults = results.slice(1);
+  const flowsLabels = flowsResults.map(r => r.gebaeudeAlter);
+  const einzahlungen = flowsResults.map(r => r.einzahlung);
+  const ausgaben = flowsResults.map(r => -r.ausgaben);
+  const aoEinzahlungen = flowsResults.map(r => r.sonderumlage);
 
   // Destroy previous charts
   if (chartFondsstand) chartFondsstand.destroy();
@@ -267,7 +271,7 @@ function renderCharts(results, plafonierung) {
   chartFlows = new Chart(document.getElementById('chartFlows'), {
     type: 'bar',
     data: {
-      labels,
+      labels: flowsLabels,
       datasets: [
         {
           label: 'Reguläre Einzahlungen',
@@ -296,7 +300,7 @@ function renderCharts(results, plafonierung) {
           callbacks: {
             title: function(items) {
               var idx = items[0].dataIndex;
-              var r = results[idx];
+              var r = flowsResults[idx];
               var parts = [];
               if (r.einzahlung > 0) parts.push('Reguläre Einzahlungen');
               if (r.ausgabenDetails.length > 0) {
