@@ -356,8 +356,8 @@ function renderSonderumlagen(results, wertquote) {
     const tr = document.createElement('tr');
     const ausgabeText = r.ausgabenDetails.map(a => a.name + ' (' + formatCHF(a.kosten) + ')').join(', ');
     tr.innerHTML =
-      '<td>' + r.gebaeudeAlter + ' Jahre</td>' +
       '<td>' + ausgabeText + '</td>' +
+      '<td>' + r.gebaeudeAlter + ' Jahre</td>' +
       '<td>' + formatCHF(r.sonderumlage) + '</td>' +
       '<td>' + formatCHF(r.sonderumlageProEigentuemer) + '</td>';
     tbody.appendChild(tr);
@@ -649,13 +649,13 @@ function updateParamsSummary() {
     html += '<div class="ausgaben-summary-section">';
     html += '<h4>Erwartete grosse Erneuerungen</h4>';
     html += '<table class="summary-table">';
-    html += '<thead><tr><th>Gebäudealter</th><th>Erneuerung</th><th>Kosten</th></tr></thead>';
+    html += '<thead><tr><th>Erneuerung</th><th>Gebäudealter</th><th>Kosten</th></tr></thead>';
     html += '<tbody>';
     params.ausgaben.forEach(function(a) {
       var kosten = a.typ === 'prozent' ? gvs * a.kosten / 100 : a.kosten;
       html += '<tr>';
-      html += '<td>' + a.faelligkeit + ' Jahre</td>';
       html += '<td>' + a.name + '</td>';
+      html += '<td>' + a.faelligkeit + ' Jahre</td>';
       html += '<td>' + formatCHF(kosten) + '</td>';
       html += '</tr>';
     });
