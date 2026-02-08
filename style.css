@@ -59,12 +59,46 @@ main {
   max-width: 780px;
 }
 
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.section-header h2 {
+  margin-bottom: 0;
+}
+
 h2 {
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 1rem;
   color: #1d1d1f;
   letter-spacing: -0.01em;
+}
+
+.btn-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  background: transparent;
+  color: #0071e3;
+  border: none;
+  border-radius: 980px;
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-edit:hover {
+  background: rgba(0, 113, 227, 0.08);
+}
+
+.btn-edit svg {
+  flex-shrink: 0;
 }
 
 h3 {
