@@ -40,7 +40,14 @@ function loadFromLocalStorage() {
     if (data.fields) {
       Object.keys(data.fields).forEach(function(id) {
         var el = document.getElementById(id);
-        if (el) el.value = data.fields[id];
+        if (el) {
+          el.value = data.fields[id];
+          // Format CHF fields
+          if (el.dataset.format === 'chf') {
+            var val = parseNum(el.value);
+            if (!isNaN(val)) el.value = formatNum(val);
+          }
+        }
       });
     }
 
@@ -378,12 +385,12 @@ function createAusgabeRow(index) {
       '<input type="number" placeholder="Fälligkeit" class="ausgabe-faelligkeit" min="0" step="1">' +
       '<span class="unit">Jahre</span>' +
     '</div>' +
-    '<div class="input-wrapper">' +
-      '<input type="text" inputmode="decimal" placeholder="Kosten" class="ausgabe-kosten" data-format="chf">' +
-    '</div>' +
     '<div class="toggle-group">' +
       '<button type="button" class="toggle-btn active" data-type="chf">CHF</button>' +
       '<button type="button" class="toggle-btn" data-type="prozent">% GVS</button>' +
+    '</div>' +
+    '<div class="input-wrapper">' +
+      '<input type="text" inputmode="decimal" placeholder="Kosten" class="ausgabe-kosten" data-format="chf">' +
     '</div>' +
     '<span class="ausgabe-chf-hint"></span>';
   return div;

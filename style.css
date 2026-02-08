@@ -102,9 +102,6 @@ h3 {
   width: 140px;
 }
 
-.ausgabe-row .input-wrapper input {
-  width: 90px;
-}
 
 .unit {
   font-size: 0.8rem;
@@ -158,8 +155,12 @@ input[type="text"]::placeholder {
   width: 220px;
 }
 
-.ausgabe-row .input-wrapper input {
-  width: 90px;
+.ausgabe-row input.ausgabe-faelligkeit {
+  width: 60px;
+}
+
+.ausgabe-row input.ausgabe-kosten {
+  width: 120px;
 }
 
 /* Toggle */
