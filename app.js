@@ -538,6 +538,13 @@ document.getElementById('ausgaben').addEventListener('click', function(e) {
   }
 });
 
+// --- Reset to defaults ---
+
+document.getElementById('resetDefaults').addEventListener('click', function() {
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+});
+
 // --- Initialize from localStorage ---
 
 loadFromLocalStorage();

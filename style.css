@@ -237,6 +237,23 @@ input[type="text"]::placeholder {
   display: none;
 }
 
+.btn-tertiary {
+  display: inline-block;
+  padding: 0.45rem 1rem;
+  background: transparent;
+  color: #6e6e73;
+  border: none;
+  border-radius: 980px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.btn-tertiary:hover {
+  color: #1d1d1f;
+}
+
 .btn-remove {
   width: 28px;
   height: 28px;
