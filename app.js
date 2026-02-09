@@ -356,14 +356,19 @@ function renderSonderumlagen(results, wertquote) {
   var totalProEigentuemer = 0;
 
   mitSonderumlage.forEach(r => {
-    const tr = document.createElement('tr');
-    const ausgabeText = r.ausgabenDetails.map(a => a.name + ' (' + formatCHF(a.kosten) + ')').join(', ');
-    tr.innerHTML =
-      '<td>' + ausgabeText + '</td>' +
-      '<td>' + r.gebaeudeAlter + ' Jahre</td>' +
-      '<td>' + formatCHF(r.sonderumlage) + '</td>' +
-      '<td>' + formatCHF(r.sonderumlageProEigentuemer) + '</td>';
-    tbody.appendChild(tr);
+    r.ausgabenDetails.forEach(a => {
+      const tr = document.createElement('tr');
+      // Proportional share of shortfall based on expense's share of total
+      const anteil = a.kosten / r.ausgaben;
+      const anteilSonderumlage = r.sonderumlage * anteil;
+      const anteilProEigentuemer = anteilSonderumlage * wertquote / 10000;
+      tr.innerHTML =
+        '<td>' + a.name + '</td>' +
+        '<td>' + r.gebaeudeAlter + ' Jahre</td>' +
+        '<td>' + formatCHF(anteilSonderumlage) + '</td>' +
+        '<td>' + formatCHF(anteilProEigentuemer) + '</td>';
+      tbody.appendChild(tr);
+    });
     totalSonderumlage += r.sonderumlage;
     totalProEigentuemer += r.sonderumlageProEigentuemer;
   });
