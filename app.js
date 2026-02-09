@@ -5,6 +5,7 @@
 var STORAGE_KEY = 'erneuerungsfonds_params';
 
 function saveToLocalStorage() {
+  return; // disabled
   var data = {
     fields: {},
     ausgaben: []
@@ -30,6 +31,7 @@ function saveToLocalStorage() {
 }
 
 function loadFromLocalStorage() {
+  return; // disabled
   var json = localStorage.getItem(STORAGE_KEY);
   if (!json) return;
 
