@@ -383,7 +383,7 @@ function renderSonderumlagen(results, wertquote) {
 
 // --- Ausgaben management ---
 
-let ausgabeCount = 2;
+let ausgabeCount = 4;
 const MAX_AUSGABEN = 5;
 
 function createAusgabeRow(index) {
@@ -546,16 +546,18 @@ document.getElementById('ausgaben').addEventListener('click', function(e) {
 
 var defaultValues = {
   gebaeudeAlter: '4',
-  fondsstand: "180'000",
+  fondsstand: "181'000",
   gvs: "18'102'000",
-  einzahlungProzent: '0.4',
+  einzahlungProzent: '0.5',
   plafonierung: '2',
   wertquote: '243'
 };
 
 var defaultAusgaben = [
-  { name: 'Sanierung Aussenhülle', faelligkeit: '20', kosten: '7', typ: 'prozent' },
-  { name: 'Photovoltaik', faelligkeit: '18', kosten: "400'000", typ: 'chf' }
+  { name: 'Sanierung Aussenhülle', faelligkeit: '30', kosten: "1'992'000", typ: 'chf' },
+  { name: 'Heizanlage ohne Leitungen & UV', faelligkeit: '25', kosten: "158'000", typ: 'chf' },
+  { name: 'Photovoltaikanlage', faelligkeit: '20', kosten: "111'000", typ: 'chf' },
+  { name: 'Aufzugsanlagen', faelligkeit: '30', kosten: "111'000", typ: 'chf' }
 ];
 
 function resetToDefaults() {

@@ -56,7 +56,7 @@
               <div class="form-group">
                 <label for="fondsstand">Aktueller Fondsstand</label>
                 <div class="input-wrapper">
-                  <input type="text" inputmode="decimal" id="fondsstand" value="180'000" data-format="chf">
+                  <input type="text" inputmode="decimal" id="fondsstand" value="181'000" data-format="chf">
                   <span class="unit">CHF</span>
                 </div>
               </div>
@@ -74,7 +74,7 @@
               <div class="form-group">
                 <label for="einzahlungProzent">Reguläre Einzahlungen</label>
                 <div class="input-wrapper">
-                  <input type="number" id="einzahlungProzent" value="0.4" min="0" step="0.1">
+                  <input type="number" id="einzahlungProzent" value="0.5" min="0" step="0.1">
                   <span class="unit">% der GVS</span>
                 </div>
                 <span class="computed-chf" id="einzahlungCHF"></span>
@@ -104,23 +104,7 @@
                 <button type="button" class="btn-remove" title="Entfernen">&times;</button>
                 <input type="text" placeholder="Name" class="ausgabe-name" value="Sanierung Aussenhülle">
                 <div class="input-wrapper">
-                  <input type="number" placeholder="Fälligkeit" class="ausgabe-faelligkeit" value="20" min="0" step="1">
-                  <span class="unit">Jahre</span>
-                </div>
-                <div class="toggle-group">
-                  <button type="button" class="toggle-btn" data-type="chf">CHF</button>
-                  <button type="button" class="toggle-btn active" data-type="prozent">% GVS</button>
-                </div>
-                <div class="input-wrapper">
-                  <input type="text" inputmode="decimal" placeholder="Kosten" class="ausgabe-kosten" value="7" data-format="chf">
-                </div>
-                <span class="ausgabe-chf-hint"></span>
-              </div>
-              <div class="ausgabe-row" data-index="1">
-                <button type="button" class="btn-remove" title="Entfernen">&times;</button>
-                <input type="text" placeholder="Name" class="ausgabe-name" value="Photovoltaik">
-                <div class="input-wrapper">
-                  <input type="number" placeholder="Fälligkeit" class="ausgabe-faelligkeit" value="18" min="0" step="1">
+                  <input type="number" placeholder="Fälligkeit" class="ausgabe-faelligkeit" value="30" min="0" step="1">
                   <span class="unit">Jahre</span>
                 </div>
                 <div class="toggle-group">
@@ -128,7 +112,55 @@
                   <button type="button" class="toggle-btn" data-type="prozent">% GVS</button>
                 </div>
                 <div class="input-wrapper">
-                  <input type="text" inputmode="decimal" placeholder="Kosten" class="ausgabe-kosten" value="400'000" data-format="chf">
+                  <input type="text" inputmode="decimal" placeholder="Kosten" class="ausgabe-kosten" value="1'992'000" data-format="chf">
+                </div>
+                <span class="ausgabe-chf-hint"></span>
+              </div>
+              <div class="ausgabe-row" data-index="1">
+                <button type="button" class="btn-remove" title="Entfernen">&times;</button>
+                <input type="text" placeholder="Name" class="ausgabe-name" value="Heizanlage ohne Leitungen & UV">
+                <div class="input-wrapper">
+                  <input type="number" placeholder="Fälligkeit" class="ausgabe-faelligkeit" value="25" min="0" step="1">
+                  <span class="unit">Jahre</span>
+                </div>
+                <div class="toggle-group">
+                  <button type="button" class="toggle-btn active" data-type="chf">CHF</button>
+                  <button type="button" class="toggle-btn" data-type="prozent">% GVS</button>
+                </div>
+                <div class="input-wrapper">
+                  <input type="text" inputmode="decimal" placeholder="Kosten" class="ausgabe-kosten" value="158'000" data-format="chf">
+                </div>
+                <span class="ausgabe-chf-hint"></span>
+              </div>
+              <div class="ausgabe-row" data-index="2">
+                <button type="button" class="btn-remove" title="Entfernen">&times;</button>
+                <input type="text" placeholder="Name" class="ausgabe-name" value="Photovoltaikanlage">
+                <div class="input-wrapper">
+                  <input type="number" placeholder="Fälligkeit" class="ausgabe-faelligkeit" value="20" min="0" step="1">
+                  <span class="unit">Jahre</span>
+                </div>
+                <div class="toggle-group">
+                  <button type="button" class="toggle-btn active" data-type="chf">CHF</button>
+                  <button type="button" class="toggle-btn" data-type="prozent">% GVS</button>
+                </div>
+                <div class="input-wrapper">
+                  <input type="text" inputmode="decimal" placeholder="Kosten" class="ausgabe-kosten" value="111'000" data-format="chf">
+                </div>
+                <span class="ausgabe-chf-hint"></span>
+              </div>
+              <div class="ausgabe-row" data-index="3">
+                <button type="button" class="btn-remove" title="Entfernen">&times;</button>
+                <input type="text" placeholder="Name" class="ausgabe-name" value="Aufzugsanlagen">
+                <div class="input-wrapper">
+                  <input type="number" placeholder="Fälligkeit" class="ausgabe-faelligkeit" value="30" min="0" step="1">
+                  <span class="unit">Jahre</span>
+                </div>
+                <div class="toggle-group">
+                  <button type="button" class="toggle-btn active" data-type="chf">CHF</button>
+                  <button type="button" class="toggle-btn" data-type="prozent">% GVS</button>
+                </div>
+                <div class="input-wrapper">
+                  <input type="text" inputmode="decimal" placeholder="Kosten" class="ausgabe-kosten" value="111'000" data-format="chf">
                 </div>
                 <span class="ausgabe-chf-hint"></span>
               </div>
