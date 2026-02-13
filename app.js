@@ -117,7 +117,7 @@ function simulate(params) {
   } = params;
 
   const jaehrlicherBeitrag = gvs * einzahlungProzent / 100;
-  const plafonierungCHF = gvs * plafonierung / 100;
+  const plafonierungCHF = plafonierung > 0 ? gvs * plafonierung / 100 : Infinity;
 
   // Determine simulation end: last expense year + 2, or at least current age + 1
   const maxAlter = ausgaben.length > 0
@@ -176,7 +176,7 @@ function getParams() {
   const fondsstandStart = parseNum(document.getElementById('fondsstand').value);
   const gvs = parseNum(document.getElementById('gvs').value);
   const einzahlungProzent = parseFloat(document.getElementById('einzahlungProzent').value);
-  const plafonierung = parseFloat(document.getElementById('plafonierung').value);
+  const plafonierung = parseFloat(document.getElementById('plafonierung').value) || 0;
   const wertquote = parseFloat(document.getElementById('wertquote').value);
 
   const ausgaben = [];
@@ -285,66 +285,76 @@ function formatCHF(val) {
 function renderCharts(results, plafonierung) {
   const flowsResults = results.slice(1);
   const startAlter = results[0].gebaeudeAlter;
+  const hasPlafonierung = plafonierung > 0 && isFinite(plafonierung);
 
   // Destroy previous chart
   if (chartCombined) chartCombined.destroy();
+
+  // Build datasets array
+  var datasets = [
+    {
+      type: 'line',
+      label: 'Fondsstand',
+      data: results.map((r, i) => ({ x: i, y: r.fondsstand })),
+      borderColor: '#0071e3',
+      backgroundColor: 'rgba(0, 113, 227, 0.08)',
+      fill: true,
+      tension: 0.1,
+      order: 0,
+    },
+  ];
+
+  if (hasPlafonierung) {
+    datasets.push({
+      type: 'line',
+      label: 'Plafonierung',
+      data: results.map((r, i) => ({ x: i, y: plafonierung })),
+      borderColor: '#aeaeb2',
+      borderDash: [6, 4],
+      pointRadius: 0,
+      fill: false,
+      order: 1,
+    });
+  }
+
+  datasets.push(
+    {
+      label: 'Reguläre Einzahlungen',
+      data: flowsResults.map((r, i) => ({ x: i + 0.5, y: r.einzahlung })),
+      backgroundColor: 'rgba(52, 199, 89, 0.7)',
+      hoverBackgroundColor: '#34c759',
+      hoverBorderColor: '#2da44e',
+      hoverBorderWidth: 2,
+      stack: 'flows',
+      order: 2,
+    },
+    {
+      label: 'Einzahlungen Erneuerungen',
+      data: flowsResults.map((r, i) => ({ x: i + 0.5, y: r.sonderumlage > 0 ? r.sonderumlage : null })),
+      backgroundColor: 'rgba(255, 149, 0, 0.7)',
+      hoverBackgroundColor: '#ff9500',
+      hoverBorderColor: '#e08600',
+      hoverBorderWidth: 2,
+      stack: 'flows',
+      order: 3,
+    },
+    {
+      label: 'Erneuerungen',
+      data: flowsResults.map((r, i) => ({ x: i + 0.5, y: r.ausgaben > 0 ? -r.ausgaben : null })),
+      backgroundColor: 'rgba(255, 59, 48, 0.7)',
+      hoverBackgroundColor: '#ff3b30',
+      hoverBorderColor: '#e0352b',
+      hoverBorderWidth: 2,
+      stack: 'flows',
+      order: 4,
+    }
+  );
 
   chartCombined = new Chart(document.getElementById('chartCombined'), {
     type: 'bar',
     plugins: [crosshairPlugin],
     data: {
-      datasets: [
-        {
-          type: 'line',
-          label: 'Fondsstand',
-          data: results.map((r, i) => ({ x: i, y: r.fondsstand })),
-          borderColor: '#0071e3',
-          backgroundColor: 'rgba(0, 113, 227, 0.08)',
-          fill: true,
-          tension: 0.1,
-          order: 0,
-        },
-        {
-          type: 'line',
-          label: 'Plafonierung',
-          data: results.map((r, i) => ({ x: i, y: plafonierung })),
-          borderColor: '#aeaeb2',
-          borderDash: [6, 4],
-          pointRadius: 0,
-          fill: false,
-          order: 1,
-        },
-        {
-          label: 'Reguläre Einzahlungen',
-          data: flowsResults.map((r, i) => ({ x: i + 0.5, y: r.einzahlung })),
-          backgroundColor: 'rgba(52, 199, 89, 0.7)',
-          hoverBackgroundColor: '#34c759',
-          hoverBorderColor: '#2da44e',
-          hoverBorderWidth: 2,
-          stack: 'flows',
-          order: 2,
-        },
-        {
-          label: 'Einzahlungen Erneuerungen',
-          data: flowsResults.map((r, i) => ({ x: i + 0.5, y: r.sonderumlage > 0 ? r.sonderumlage : null })),
-          backgroundColor: 'rgba(255, 149, 0, 0.7)',
-          hoverBackgroundColor: '#ff9500',
-          hoverBorderColor: '#e08600',
-          hoverBorderWidth: 2,
-          stack: 'flows',
-          order: 3,
-        },
-        {
-          label: 'Erneuerungen',
-          data: flowsResults.map((r, i) => ({ x: i + 0.5, y: r.ausgaben > 0 ? -r.ausgaben : null })),
-          backgroundColor: 'rgba(255, 59, 48, 0.7)',
-          hoverBackgroundColor: '#ff3b30',
-          hoverBorderColor: '#e0352b',
-          hoverBorderWidth: 2,
-          stack: 'flows',
-          order: 4,
-        },
-      ],
+      datasets: datasets,
     },
     options: {
       responsive: true,
@@ -601,7 +611,7 @@ function updateComputedCHF() {
   document.getElementById('einzahlungCHF').textContent =
     '= CHF ' + formatNum(gvs * einzPct / 100) + ' / Jahr';
   document.getElementById('plafonierungCHF').textContent =
-    '= CHF ' + formatNum(gvs * plafPct / 100);
+    plafPct > 0 ? '= CHF ' + formatNum(gvs * plafPct / 100) : '= Keine';
 }
 
 ['gvs', 'einzahlungProzent', 'plafonierung'].forEach(function(id) {
@@ -765,8 +775,13 @@ function updateParamsSummary() {
   html += '</div>';
 
   html += '<div class="params-summary-card">';
-  html += '<span class="params-summary-label">Plafonierung (' + params.plafonierung + '%)</span>';
-  html += '<span class="params-summary-value">CHF ' + formatNum(gvs * params.plafonierung / 100) + '</span>';
+  if (params.plafonierung > 0) {
+    html += '<span class="params-summary-label">Plafonierung (' + params.plafonierung + '%)</span>';
+    html += '<span class="params-summary-value">CHF ' + formatNum(gvs * params.plafonierung / 100) + '</span>';
+  } else {
+    html += '<span class="params-summary-label">Plafonierung</span>';
+    html += '<span class="params-summary-value">Keine</span>';
+  }
   html += '</div>';
 
   html += '</div>';
