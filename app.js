@@ -195,141 +195,257 @@ function getParams() {
 
 // --- Chart rendering ---
 
-let chartFondsstand = null;
-let chartFlows = null;
+let chartCombined = null;
+
+// External tooltip handler
+function getOrCreateTooltip(chart) {
+  var tooltipEl = chart.canvas.parentNode.querySelector('.chart-tooltip');
+  if (!tooltipEl) {
+    tooltipEl = document.createElement('div');
+    tooltipEl.className = 'chart-tooltip';
+    chart.canvas.parentNode.appendChild(tooltipEl);
+  }
+  return tooltipEl;
+}
+
+function externalTooltipHandler(context) {
+  var chart = context.chart;
+  var tooltip = context.tooltip;
+  var tooltipEl = getOrCreateTooltip(chart);
+
+  if (tooltip.opacity === 0 || !tooltip.body || tooltip.body.length === 0) {
+    tooltipEl.style.opacity = 0;
+    return;
+  }
+
+  // Build tooltip content
+  var titleLines = tooltip.title || [];
+  var bodyLines = tooltip.body.map(function(b) { return b.lines; });
+
+  // Check if there's actual content
+  var hasContent = bodyLines.some(function(lines) { return lines.length > 0; });
+  if (!hasContent) {
+    tooltipEl.style.opacity = 0;
+    return;
+  }
+
+  var html = '';
+  if (titleLines.length) {
+    html += '<div class="chart-tooltip-title">' + titleLines.join('<br>') + '</div>';
+  }
+  bodyLines.forEach(function(lines, i) {
+    var colors = tooltip.labelColors[i];
+    lines.forEach(function(line) {
+      html += '<div class="chart-tooltip-item">';
+      html += '<span class="chart-tooltip-color" style="background:' + colors.backgroundColor + ';border-color:' + colors.borderColor + '"></span>';
+      html += '<span>' + line + '</span>';
+      html += '</div>';
+    });
+  });
+  tooltipEl.innerHTML = html;
+
+  // Position tooltip above chart at crosshair x
+  var position = chart.canvas.getBoundingClientRect();
+  var x = tooltip.caretX;
+  var chartTop = chart.scales.y.top;
+
+  tooltipEl.style.opacity = 1;
+  tooltipEl.style.left = x + 'px';
+  tooltipEl.style.bottom = (chart.canvas.offsetHeight - chartTop + 8) + 'px';
+  tooltipEl.style.transform = 'translateX(-50%)';
+}
+
+// Crosshair plugin for vertical line on hover
+const crosshairPlugin = {
+  id: 'crosshair',
+  afterDraw: function(chart) {
+    if (chart.tooltip._active && chart.tooltip._active.length) {
+      var activePoint = chart.tooltip._active[0];
+      var ctx = chart.ctx;
+      var x = activePoint.element.x;
+      var topY = chart.scales.y.top;
+      var bottomY = chart.scales.y.bottom;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(x, topY);
+      ctx.lineTo(x, bottomY);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+};
 
 function formatCHF(val) {
   return val.toLocaleString('de-CH', { style: 'currency', currency: 'CHF', maximumFractionDigits: 0 });
 }
 
 function renderCharts(results, plafonierung) {
-  const labels = results.map(r => r.gebaeudeAlter);
-  const fondsstandData = results.map(r => r.fondsstand);
-
-  // Für Flows-Chart: erstes Jahr überspringen (per Definition 0)
   const flowsResults = results.slice(1);
-  const flowsLabels = flowsResults.map(r => r.gebaeudeAlter);
-  const einzahlungen = flowsResults.map(r => r.einzahlung);
-  const ausgaben = flowsResults.map(r => -r.ausgaben);
-  const aoEinzahlungen = flowsResults.map(r => r.sonderumlage);
+  const startAlter = results[0].gebaeudeAlter;
 
-  // Destroy previous charts
-  if (chartFondsstand) chartFondsstand.destroy();
-  if (chartFlows) chartFlows.destroy();
+  // Destroy previous chart
+  if (chartCombined) chartCombined.destroy();
 
-  const tooltipCHF = {
-    callbacks: {
-      title: function(items) {
-        return 'Nach ' + items[0].label + ' Jahren';
-      },
-      label: function(ctx) {
-        return ctx.dataset.label + ': ' + formatCHF(Math.abs(ctx.parsed.y));
-      }
-    }
-  };
-
-  // Chart 1: Fondsstand
-  chartFondsstand = new Chart(document.getElementById('chartFondsstand'), {
-    type: 'line',
+  chartCombined = new Chart(document.getElementById('chartCombined'), {
+    type: 'bar',
+    plugins: [crosshairPlugin],
     data: {
-      labels,
       datasets: [
         {
+          type: 'line',
           label: 'Fondsstand',
-          data: fondsstandData,
+          data: results.map((r, i) => ({ x: i, y: r.fondsstand })),
           borderColor: '#0071e3',
           backgroundColor: 'rgba(0, 113, 227, 0.08)',
           fill: true,
           tension: 0.1,
+          order: 0,
         },
         {
+          type: 'line',
           label: 'Plafonierung',
-          data: labels.map(() => plafonierung),
+          data: results.map((r, i) => ({ x: i, y: plafonierung })),
           borderColor: '#aeaeb2',
           borderDash: [6, 4],
           pointRadius: 0,
           fill: false,
+          order: 1,
         },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        tooltip: tooltipCHF,
-      },
-      scales: {
-        x: {
-          title: { display: true, text: 'Gebäudealter (Jahre)' },
-        },
-        y: {
-          title: { display: false },
-          beginAtZero: true,
-          ticks: {
-            callback: v => formatCHF(v),
-          },
-        },
-      },
-    },
-  });
-
-  // Chart 2: Ein-/Auszahlungen
-  chartFlows = new Chart(document.getElementById('chartFlows'), {
-    type: 'bar',
-    data: {
-      labels: flowsLabels,
-      datasets: [
         {
           label: 'Reguläre Einzahlungen',
-          data: einzahlungen,
-          backgroundColor: '#34c759',
+          data: flowsResults.map((r, i) => ({ x: i + 0.5, y: r.einzahlung })),
+          backgroundColor: 'rgba(52, 199, 89, 0.7)',
+          hoverBackgroundColor: '#34c759',
+          hoverBorderColor: '#2da44e',
+          hoverBorderWidth: 2,
+          stack: 'flows',
+          order: 2,
         },
         {
-          label: 'Ausserordentliche Einzahlungen',
-          data: aoEinzahlungen,
-          backgroundColor: '#ff9500',
+          label: 'Einzahlungen Erneuerungen',
+          data: flowsResults.map((r, i) => ({ x: i + 0.5, y: r.sonderumlage > 0 ? r.sonderumlage : null })),
+          backgroundColor: 'rgba(255, 149, 0, 0.7)',
+          hoverBackgroundColor: '#ff9500',
+          hoverBorderColor: '#e08600',
+          hoverBorderWidth: 2,
+          stack: 'flows',
+          order: 3,
         },
         {
-          label: 'Ausgaben',
-          data: ausgaben,
-          backgroundColor: '#ff3b30',
+          label: 'Erneuerungen',
+          data: flowsResults.map((r, i) => ({ x: i + 0.5, y: r.ausgaben > 0 ? -r.ausgaben : null })),
+          backgroundColor: 'rgba(255, 59, 48, 0.7)',
+          hoverBackgroundColor: '#ff3b30',
+          hoverBorderColor: '#e0352b',
+          hoverBorderWidth: 2,
+          stack: 'flows',
+          order: 4,
         },
       ],
     },
     options: {
       responsive: true,
+      interaction: {
+        mode: 'nearest',
+        axis: 'x',
+        intersect: false,
+      },
       plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            padding: 20,
+            usePointStyle: true,
+            sort: function(a, b) {
+              // Fondsstand first, then Plafonierung, then the rest
+              var order = ['Fondsstand', 'Plafonierung', 'Reguläre Einzahlungen', 'Einzahlungen Erneuerungen', 'Erneuerungen'];
+              return order.indexOf(a.text) - order.indexOf(b.text);
+            }
+          }
+        },
         tooltip: {
+          enabled: false,
+          external: externalTooltipHandler,
           filter: function(item) {
-            return item.parsed.y !== 0;
+            if (item.dataset.type !== 'line' && (item.parsed.y === 0 || item.parsed.y === null)) return false;
+            return true;
           },
           callbacks: {
             title: function(items) {
-              var idx = items[0].dataIndex;
-              var r = flowsResults[idx];
-              var parts = [];
-              if (r.einzahlung > 0) parts.push('Reguläre Einzahlungen');
-              if (r.ausgabenDetails.length > 0) {
-                r.ausgabenDetails.forEach(function(a) { parts.push(a.name); });
+              if (items.length === 0) return '';
+              var ctx = items[0];
+              var xVal = ctx.parsed.x;
+              // For bars (at x.5 positions), show "Jahr X"
+              // For lines (at integer positions), show "Nach X Jahren"
+              if (ctx.dataset.type === 'line') {
+                var alter = startAlter + Math.round(xVal);
+                return 'Nach ' + alter + ' Jahren';
+              } else {
+                var alter = startAlter + Math.round(xVal);
+                return 'Jahr ' + alter;
               }
-              return parts.join(', ') || 'Gebäudealter ' + r.gebaeudeAlter;
             },
             label: function(ctx) {
-              return formatCHF(Math.abs(ctx.parsed.y));
+              var value = Math.abs(ctx.parsed.y);
+              if (ctx.dataset.type === 'line') {
+                return ctx.dataset.label + ': ' + formatCHF(value);
+              }
+              // For Ausgaben, show expense names
+              if (ctx.dataset.label === 'Erneuerungen' && ctx.parsed.y !== null && ctx.parsed.y !== 0) {
+                var idx = Math.round(ctx.parsed.x - 0.5);
+                var r = flowsResults[idx];
+                if (r && r.ausgabenDetails.length > 0) {
+                  return r.ausgabenDetails.map(a => a.name + ': -' + formatCHF(a.kosten));
+                }
+              }
+              if (ctx.dataset.label === 'Einzahlungen Erneuerungen' && ctx.parsed.y !== null && ctx.parsed.y !== 0) {
+                var idx = Math.round(ctx.parsed.x - 0.5);
+                var r = flowsResults[idx];
+                if (r && r.ausgabenDetails.length > 0) {
+                  return r.ausgabenDetails.map(a => a.name + ': ' + formatCHF(r.sonderumlage * (a.kosten / r.ausgaben)));
+                }
+              }
+              return ctx.dataset.label + ': ' + formatCHF(value);
             }
           }
         },
       },
       scales: {
         x: {
+          type: 'linear',
           title: { display: true, text: 'Gebäudealter (Jahre)' },
-          stacked: true,
+          min: 0,
+          max: results.length - 0.5,
+          offset: false,
+          afterBuildTicks: function(axis) {
+            // Generate ticks at bar positions (0.5, 1.5, 2.5, ...)
+            axis.ticks = [];
+            for (var i = 0; i < flowsResults.length; i++) {
+              axis.ticks.push({ value: i + 0.5 });
+            }
+          },
+          ticks: {
+            callback: function(value) {
+              var idx = Math.round(value - 0.5);
+              if (idx >= 0 && idx < flowsResults.length) {
+                return flowsResults[idx].gebaeudeAlter;
+              }
+              return '';
+            }
+          },
+          grid: {
+            display: false,
+          },
         },
         y: {
           title: { display: false },
-          stacked: true,
           ticks: {
             callback: v => formatCHF(v),
           },
+          beginAtZero: true,
         },
       },
     },

@@ -336,6 +336,8 @@ input[type="text"]::placeholder {
 }
 
 .chart-container {
+  position: relative;
+  overflow: visible;
   background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 16px;
@@ -350,7 +352,43 @@ input[type="text"]::placeholder {
 }
 
 .chart-container canvas {
-  max-height: 280px;
+  max-height: 400px;
+}
+
+.chart-tooltip {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 10px 12px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  white-space: nowrap;
+}
+
+.chart-tooltip-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #1d1d1f;
+}
+
+.chart-tooltip-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1d1d1f;
+  padding: 2px 0;
+}
+
+.chart-tooltip-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
 /* Sonderumlagen table */
