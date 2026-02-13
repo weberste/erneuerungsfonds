@@ -345,19 +345,18 @@ function renderSonderumlagen(results, wertquote) {
   tbody.innerHTML = '';
   tfoot.innerHTML = '';
 
-  const mitSonderumlage = results.filter(r => r.sonderumlage > 0);
-  if (mitSonderumlage.length === 0) {
+  // Get all results that have expenses
+  const mitAusgaben = results.filter(r => r.ausgabenDetails.length > 0);
+  if (mitAusgaben.length === 0) {
     section.hidden = true;
     return;
   }
 
   section.hidden = false;
-  document.getElementById('wertquoteHinweis').textContent =
-    'Berechnung pro Eigentümer basierend auf Wertquote ' + wertquote + ' / 10\u2019000';
   var totalSonderumlage = 0;
   var totalProEigentuemer = 0;
 
-  mitSonderumlage.forEach(r => {
+  mitAusgaben.forEach(r => {
     r.ausgabenDetails.forEach(a => {
       const tr = document.createElement('tr');
       // Proportional share of shortfall based on expense's share of total
