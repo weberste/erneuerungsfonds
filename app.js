@@ -1,89 +1,5 @@
 'use strict';
 
-// --- localStorage persistence ---
-
-var STORAGE_KEY = 'erneuerungsfonds_params';
-
-function saveToLocalStorage() {
-  return; // disabled
-  var data = {
-    fields: {},
-    ausgaben: []
-  };
-
-  // Save simple fields
-  ['gebaeudeAlter', 'fondsstand', 'gvs', 'einzahlungProzent', 'plafonierung', 'wertquote'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) data.fields[id] = el.value;
-  });
-
-  // Save ausgaben
-  document.querySelectorAll('.ausgabe-row').forEach(function(row) {
-    data.ausgaben.push({
-      name: row.querySelector('.ausgabe-name').value,
-      faelligkeit: row.querySelector('.ausgabe-faelligkeit').value,
-      kosten: row.querySelector('.ausgabe-kosten').value,
-      typ: row.querySelector('.toggle-btn.active').dataset.type
-    });
-  });
-
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
-
-function loadFromLocalStorage() {
-  return; // disabled
-  var json = localStorage.getItem(STORAGE_KEY);
-  if (!json) return;
-
-  try {
-    var data = JSON.parse(json);
-
-    // Restore simple fields
-    if (data.fields) {
-      Object.keys(data.fields).forEach(function(id) {
-        var el = document.getElementById(id);
-        if (el) {
-          el.value = data.fields[id];
-          // Format CHF fields
-          if (el.dataset.format === 'chf') {
-            var val = parseNum(el.value);
-            if (!isNaN(val)) el.value = formatNum(val);
-          }
-        }
-      });
-    }
-
-    // Restore ausgaben
-    if (data.ausgaben && data.ausgaben.length > 0) {
-      var container = document.getElementById('ausgaben');
-      container.innerHTML = '';
-
-      data.ausgaben.forEach(function(ausgabe, index) {
-        var row = createAusgabeRow(index);
-        row.querySelector('.ausgabe-name').value = ausgabe.name || '';
-        row.querySelector('.ausgabe-faelligkeit').value = ausgabe.faelligkeit || '';
-        row.querySelector('.ausgabe-kosten').value = ausgabe.kosten || '';
-
-        // Set toggle
-        var toggleBtns = row.querySelectorAll('.toggle-btn');
-        toggleBtns.forEach(function(btn) {
-          btn.classList.remove('active');
-          if (btn.dataset.type === ausgabe.typ) {
-            btn.classList.add('active');
-          }
-        });
-
-        container.appendChild(row);
-      });
-
-      ausgabeCount = data.ausgaben.length;
-      updateAddButton();
-    }
-  } catch (e) {
-    console.warn('Could not load saved data:', e);
-  }
-}
-
 // --- Number formatting ---
 
 function formatNum(val) {
@@ -545,7 +461,6 @@ document.getElementById('addAusgabe').addEventListener('click', function() {
   const container = document.getElementById('ausgaben');
   container.appendChild(createAusgabeRow(ausgabeCount++));
   updateAddButton();
-  saveToLocalStorage();
 });
 
 function updateAusgabenHints() {
@@ -658,17 +573,6 @@ document.getElementById('simForm').addEventListener('submit', function(e) {
   document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
 });
 
-// --- Save on input ---
-
-document.getElementById('simForm').addEventListener('input', function() {
-  saveToLocalStorage();
-});
-document.getElementById('ausgaben').addEventListener('click', function(e) {
-  if (e.target.classList.contains('toggle-btn') || e.target.classList.contains('btn-remove')) {
-    saveToLocalStorage();
-  }
-});
-
 // --- Reset to defaults ---
 
 var defaultValues = {
@@ -718,7 +622,6 @@ function resetToDefaults() {
   updateAddButton();
   updateComputedCHF();
   updateAusgabenHints();
-  localStorage.removeItem(STORAGE_KEY);
 }
 
 document.getElementById('resetDefaults').addEventListener('click', resetToDefaults);
@@ -808,9 +711,30 @@ function updateParamsSummary() {
   document.getElementById('paramsSummary').innerHTML = html;
 }
 
+// --- Apply URL query parameters ---
+
+function applyQueryParams() {
+  var params = new URLSearchParams(window.location.search);
+
+  var wertquote = params.get('wertquote');
+  if (wertquote !== null && !isNaN(parseFloat(wertquote))) {
+    document.getElementById('wertquote').value = parseFloat(wertquote);
+  }
+
+  var plafonierung = params.get('plafonierung');
+  if (plafonierung !== null && !isNaN(parseFloat(plafonierung))) {
+    document.getElementById('plafonierung').value = parseFloat(plafonierung);
+  }
+
+  var einzahlung = params.get('einzahlung');
+  if (einzahlung !== null && !isNaN(parseFloat(einzahlung))) {
+    document.getElementById('einzahlungProzent').value = parseFloat(einzahlung);
+  }
+}
+
 // --- Initialize from localStorage ---
 
-loadFromLocalStorage();
+applyQueryParams();
 updateComputedCHF();
 updateAusgabenHints();
 updateParamsSummary();
